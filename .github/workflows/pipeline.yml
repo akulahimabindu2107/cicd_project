@@ -1,0 +1,1 @@
+name: First CI Pipelineon:  push:    branches:      - masterjobs:  build:    runs-on: ubuntu-latest    steps:      - name: Checkout Code        uses: actions/checkout@v3      - name: Install Python        uses: actions/setup-python@v4        with:          python-version: '3.9'      - name: Run Python Script        run: python first.py.py
