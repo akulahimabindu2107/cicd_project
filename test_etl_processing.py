@@ -52,3 +52,33 @@ def test_run_etl_executes_without_error():
     # This ensures main ETL workflow runs
     run_etl()
     assert True
+def test_filter_no_active_customers():
+    data = [
+        {"name": "A", "age": 30, "spend": 2000, "status": "inactive"},
+        {"name": "B", "age": 40, "spend": 3000, "status": "inactive"},
+    ]
+    processor = CustomerProcessor(data)
+    active = processor.filter_active_customers()
+    assert len(active) == 0
+
+
+def test_total_revenue_zero_case():
+    processor = CustomerProcessor([])
+    assert processor.total_revenue() == 0
+
+
+def test_enrich_customer_data_length():
+    data = load_customers()
+    processor = CustomerProcessor(data)
+    enriched = processor.enrich_customer_data()
+    assert len(enriched) == len(data)
+
+
+def test_enrich_customer_discount_values():
+    data = load_customers()
+    processor = CustomerProcessor(data)
+    enriched = processor.enrich_customer_data()
+
+    discounts = [c["discount"] for c in enriched]
+    assert 0.20 in discounts
+    assert 0.15 in discounts or 0.10 in discounts or 0.05 in discounts
