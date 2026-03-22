@@ -82,3 +82,26 @@ def test_enrich_customer_discount_values():
     discounts = [c["discount"] for c in enriched]
     assert 0.20 in discounts
     assert 0.15 in discounts or 0.10 in discounts or 0.05 in discounts
+def test_run_etl_multiple_times():
+    for _ in range(3):
+        run_etl()
+    assert True
+
+
+def test_enrich_with_custom_data():
+    data = [
+        {"name": "X", "age": 80, "spend": 20000, "status": "active"},
+        {"name": "Y", "age": 20, "spend": 100, "status": "inactive"},
+        {"name": "Z", "age": 55, "spend": 6000, "status": "active"},
+    ]
+    processor = CustomerProcessor(data)
+    enriched = processor.enrich_customer_data()
+
+    assert enriched[0]["discount"] == 0.20
+    assert enriched[2]["discount"] == 0.10
+
+
+def test_total_revenue_large_dataset():
+    data = [{"name": str(i), "age": 30, "spend": 1000, "status": "active"} for i in range(20)]
+    processor = CustomerProcessor(data)
+    assert processor.total_revenue() == 20000
